@@ -1,48 +1,41 @@
 import { text } from "./text";
 
 interface CanvasProps {
-  context: CanvasRenderingContext2D;
-  fontSize: number;
-  y: any;
-  x: any;
-  getY: any;
+  y: number;
+  x: number;
+  color: string;
+  isVertical: boolean;
+  context: CanvasRenderingContext2D | null;
 }
 
 export class Symbol {
+  x: number;
+  y: number;
+  color: string;
+  isVertical: boolean;
+  texts: string;
   context: CanvasRenderingContext2D;
-  fontSize: number;
-  getY: any;
-  x: any;
-  y: any;
-  texts: any;
-  canDrawCircle: any;
 
-  constructor({ x, y, fontSize, context, getY }: CanvasProps) {
-    this.context = context;
-    this.fontSize = fontSize;
+  constructor({ x, y, isVertical, context, color }: CanvasProps) {
     this.x = x;
     this.y = y;
+    this.color = color;
+    this.isVertical = isVertical;
     this.texts = text;
-    this.getY = getY;
-    this.canDrawCircle = true;
+    this.context = context;
   }
 
   drawCircle() {
     const text = this.texts.charAt(
       Math.floor(Math.random() * this.texts.length)
     );
-    this.context.fillStyle = "white";
+
+    this.context.fillStyle = this.color;
+
     this.context.fillText(
       text,
-      this.x * Math.random() * 10 * this.fontSize,
-      this.y * this.fontSize
+      this.x * (this.isVertical ? Math.random() : 1),
+      this.y * (!this.isVertical ? Math.random() : 1)
     );
-
-    if (this.y * this.fontSize > window.innerHeight && Math.random() > 0.2) {
-      this.getY.getY();
-      this.y = 0;
-    } else {
-      this.y += Math.random() * 10;
-    }
   }
 }

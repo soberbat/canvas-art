@@ -14,3 +14,59 @@
 .canvas {
   background-color: black;
 }
+
+.button {
+  padding: 0.5rem 1rem;
+  color: #b9b9b9;
+  background-color: #000d26;
+  border: 0.01rem solid black;
+  border-radius: 0.5rem;
+  font-size: 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-family: "Roboto Mono", monospace;
+  transition: all 0.3s ease-in;
+}
+
+.button:hover {
+  background-color: #006cff;
+  color: black;
+  cursor: pointer;
+}
+
+.button.randomness {
+}
+
+.button.size {
+  gap: 0.2rem;
+}
+
+.buttonsWrapper {
+  position: fixed;
+  bottom: 20px;
+  width: 100vw;
+  z-index: 200;
+  justify-content: center;
+  gap: 1rem;
+  display: flex;
+}
+
+.operator {
+  border-radius: 100%;
+  width: 1.2rem;
+  height: 1.2rem;
+  background-color: #ebf3ff;
+
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  margin-left: 0.3rem;
+}
+
+.operator.minus {
+  margin-left: 1rem;
+}

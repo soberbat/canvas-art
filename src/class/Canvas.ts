@@ -11,58 +11,100 @@ export class Canvas {
   canvasHeight!: number;
   context!: CanvasRenderingContext2D | null;
   fontSize: number;
-  columns: number;
-  symbols: any[];
-  lastTime: number;
-  requiredPassedTime: number;
-  fps: number;
-  time: number;
-  animated: number;
-  isChecked: boolean;
+  y: number;
+  x: number;
+  symbols: Symbol[];
+  animationID: any;
+  timeoutId: any;
+  now: number;
+  delta: number;
+  symbolsCount = 0;
+  then = Date.now();
+  fps = 20;
+  interval = 1000 / this.fps;
 
   constructor({ canvasWidth, canvasHeight, context }: TCanvas) {
     this.canvasWidth = canvasWidth;
     this.canvasHeight = canvasHeight;
     this.context = context;
-    this.fontSize = 0.8;
-    this.columns = canvasWidth / this.fontSize;
+    this.fontSize = 5;
     this.symbols = [];
     this.#init(this);
     this.animate();
-    this.lastTime = 0;
-    this.fps = 40;
-    this.requiredPassedTime = 1000 / this.fps;
-    this.time = 0;
-    this.animated = 0;
+  }
+
+  adjustFont(increase: boolean) {
+    increase ? (this.fontSize += 0.8) : (this.fontSize -= 0.8);
+  }
+
+  getRandomArbitrary(min: number, max: number) {
+    return Math.random() * (max - min) + min;
+  }
+
+  clearCanvas() {
+    this.context.fillStyle = "rgba(255, 255, 255, 1)";
+    this.context.fillRect(0, 0, window.innerWidth, window.innerHeight);
+
+    cancelAnimationFrame(this.animationID);
+    clearTimeout(this.timeoutId);
+
+    this.symbolsCount = 0;
+    this.symbols = [];
+    this.fontSize = 5;
+
+    this.#init();
+    this.animate();
+  }
+
+  randColor = () => {
+    return (
+      "#" +
+      Math.floor(Math.random() * 16777215)
+        .toString(16)
+        .padStart(6, "0")
+        .toUpperCase()
+    );
+  };
+
+  #init(this: any) {
+    this.symbolsCount += 10;
+    const isVertical = Math.random() < 0.5 ? true : false;
+
+    this.y = this.getRandomArbitrary(0, window.innerHeight - 0);
+    this.x = this.getRandomArbitrary(window.innerWidth - 0, 0);
+
+    const color = this.randColor();
     this.context.font = this.fontSize + "px monospace";
-    this.isChecked = false;
-  }
 
-  getY() {
-    this.isChecked = true;
-  }
-
-  #init(this) {
-    [...Array(Math.floor(this.columns)).fill(0)].map(
+    [...Array(10).fill(0)].map(
       (_, i) =>
-        (this.symbols[i] = new Symbol({
-          x: i,
-          y: 0,
-          fontSize: this.fontSize,
+        (this.symbols[i + this.symbolsCount] = new Symbol({
+          x: this.x,
+          y: this.y,
+          isVertical,
           context: this.context,
-          getY: this,
+          color,
         }))
     );
+
+    this.timeoutId = setTimeout(() => {
+      this.#init(this);
+    }, 500);
   }
 
   animate = () => {
-    this.symbols.forEach((symbol) => symbol.drawCircle());
+    this.now = Date.now();
+    this.delta = this.now - this.then;
 
-    if (this.isChecked) {
-      this.context.font = "35px monospace";
+    if (this.delta > this.interval) {
+      this.context.fillStyle = "rgba(0,0,0, 0.07)";
+      this.context.fillRect(0, 0, window.innerWidth, window.innerHeight);
+      this.symbols.forEach((symbol) => symbol.drawCircle());
+      this.context.font = `${this.fontSize}px monospace`;
+
+      this.then = this.now - (this.delta % this.interval);
     }
 
-    requestAnimationFrame(this.animate);
-    console.log(this.isChecked);
+    this.animationID = requestAnimationFrame(this.animate);
   };
 }

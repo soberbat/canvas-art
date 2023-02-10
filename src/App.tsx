@@ -1,21 +1,28 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useRef } from "react";
 import "./App.css";
 import { Canvas } from "./class/Canvas";
 
+import Buttons from "./components/Buttons/Buttons";
+
 function App() {
-  const [count, setCount] = useState(0);
+  const canvasClassRef = useRef<Canvas | null>(null);
 
   const cRef = useCallback((ref: HTMLCanvasElement) => {
     const context = ref.getContext("2d");
 
     (context as CanvasRenderingContext2D).imageSmoothingEnabled = false;
 
-    const CCanvas = new Canvas({
+    canvasClassRef.current = new Canvas({
       canvasHeight: window.innerHeight,
       canvasWidth: window.innerWidth,
       context,
     });
   }, []);
+
+  const handleFontClick = (increase: boolean) =>
+    canvasClassRef?.current?.adjustFont(increase);
+
+  const handleReset = () => canvasClassRef?.current?.clearCanvas();
 
   return (
     <div className="App">
@@ -24,7 +31,8 @@ function App() {
         height={window.innerHeight}
         className="canvas"
         ref={cRef}
-      ></canvas>
+      />
+      <Buttons handleFontClick={handleFontClick} handleReset={handleReset} />
     </div>
   );
 }
