@@ -29,7 +29,7 @@ export class Canvas {
     this.context = context;
     this.fontSize = 5;
     this.symbols = [];
-    this.#init(this);
+    this.#init();
     this.animate();
   }
 
@@ -72,7 +72,6 @@ export class Canvas {
 
     this.y = this.getRandomArbitrary(0, window.innerHeight - 0);
     this.x = this.getRandomArbitrary(window.innerWidth - 0, 0);
-
     const color = this.randColor();
     this.context.font = this.fontSize + "px monospace";
 
@@ -99,7 +98,9 @@ export class Canvas {
     if (this.delta > this.interval) {
       this.context.fillStyle = "rgba(0,0,0, 0.07)";
       this.context.fillRect(0, 0, window.innerWidth, window.innerHeight);
+
       this.symbols.forEach((symbol) => symbol.drawCircle());
+
       this.context.font = `${this.fontSize}px monospace`;
 
       this.then = this.now - (this.delta % this.interval);
